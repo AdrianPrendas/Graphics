@@ -10,6 +10,15 @@ GLfloat xI = 0;
 GLfloat yI = 0;
 GLfloat zI = 0;
 
+GLfloat xR = 0;
+GLfloat yR = 0;
+GLfloat zR = 0;
+
+GLfloat rotacionInput = 0;
+
+int speed = 0;
+int laser = 0;
+
 void dibujarCola(){
   GLUquadricObj *Cilindro;
   Cilindro = gluNewQuadric();
@@ -66,10 +75,11 @@ void dibujarAletaDeCola(){
   glPushMatrix();
       glColor4ub(0, 255, 0, 0);   //Azul
       gluQuadricDrawStyle(cilindroColaAbajo, GLU_FILL);
-      glTranslatef(-85, 0, 0); //x, y, z
+      glTranslatef(-86, 0, 0); //x, y, z
       glRotatef(90, 1, 0, 0);
+      glScalef(1,1,2);
       glRotatef(-45, 0, 1, 0);
-      gluCylinder(cilindroColaAbajo, 4, 1, 15, 5, 1);
+      gluCylinder(cilindroColaAbajo, 4, 1, 10, 5, 1);
   glPopMatrix();
 
   gluDeleteQuadric(cilindroColaAbajo);
@@ -82,11 +92,11 @@ void dibujarAletaDeCola(){
   glPushMatrix();
       glColor4ub(0, 255, 0, 0);   //Azul
       gluQuadricDrawStyle(cilindroColaLateral, GLU_FILL);
-      glTranslatef(-87, 0, 0); //x, y, z
+      glTranslatef(-86, 0, 0); //x, y, z
       glRotatef(45, 0, 1, 0);
       glRotatef(-45, 0, 1, 0);
-
-      gluCylinder(cilindroColaLateral, 4, 1, 15, 5, 1);
+      glScalef(1.5,0.7,1.5);
+      gluCylinder(cilindroColaLateral, 4, 1, 10, 5, 1);
   glPopMatrix();
 
   gluDeleteQuadric(cilindroColaLateral);
@@ -99,10 +109,11 @@ void dibujarAletaDeCola(){
   glPushMatrix();
       glColor4ub(0, 255, 0, 0);   //Azul
       gluQuadricDrawStyle(cilindroColaArriba, GLU_FILL);
-      glTranslatef(-97, 10, 0); //x, y, z
+      glTranslatef(-101, 15, 0); //x, y, z
       glRotatef(90, 1, 0, 0);
       glRotatef(45, 0, 1, 0);
-      gluCylinder(cilindroColaArriba, 1, 4, 15, 5, 1);
+      glScalef(1,1,2);
+      gluCylinder(cilindroColaArriba, 1, 4, 10, 5, 1);
   glPopMatrix();
 
   gluDeleteQuadric(cilindroColaArriba);
@@ -236,25 +247,8 @@ void dibujarEsferasDelTrenDeAtterizaje(){
   
 }
 
-void dibujarHelicoptero (void) {
-
-  dibujarCola();
-
-  dibujarAletaDeCola();
-
-  dibujarRotorArriba();
-
-  dibujarRotorAtras();
-
-  dibujarPieDerecho();
-
-  dibujarPieIzquierdo();
-
-  dibujarAspas ();
-
-  dibujarEsferasDelTrenDeAtterizaje();
-
-//dibujando la cabina // con una esfera
+void dibujarCabina(){
+  //dibujando la cabina // con una esfera
     
   glPushMatrix(); //este scope asila ala esfera para que rote individualmente del cubo
     glColor4ub(255, 0, 0, 0);   //Rojo
@@ -264,6 +258,7 @@ void dibujarHelicoptero (void) {
     glutWireSphere(40, 30, 10); //tamaño de la esfera, meridianos, paralelos
   glPopMatrix();
 }
+
 
 void dibujarAspas () {
   // aspas de arriba 
@@ -302,6 +297,50 @@ void dibujarAspas () {
   // aspas de atras
 }
 
+void dispararLaser(){
+  if (laser == 1) {
+    glLineWidth(5);
+
+    glBegin(GL_LINES);
+        glColor4ub(255, 0, 0, 0); //Rojo
+        glVertex3f( 500, -30, -15 ); 
+        glVertex3f( 0, -30, -15 ); //Línea Norte a Sur
+        glVertex3f( 500, -30,  15 ); 
+        glVertex3f( 0, -30,  15 ); //Línea Norte a Sur
+    glEnd ();
+  }
+}
+
+void dibujarHelicoptero () {
+
+  glPushMatrix();
+
+    glTranslatef(xI,yI,zI);
+    glRotatef(rotacionInput,xR,yR,zR);
+
+    dibujarCola();
+
+    dibujarAletaDeCola();
+
+    dibujarRotorArriba();
+
+    dibujarRotorAtras();
+
+    dibujarPieDerecho();
+
+    dibujarPieIzquierdo();
+
+    dibujarAspas ();
+
+    dibujarEsferasDelTrenDeAtterizaje();
+
+    dibujarCabina();
+
+    dispararLaser();
+
+  glPopMatrix();
+}
+
 void display(void){
   
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -321,7 +360,9 @@ void display(void){
 }
 
 void spinDisplay(void){//nos permitira hacer animaciones
-  Rotacion += 9.0;
+
+  Rotacion += speed;
+
   glutPostRedisplay(); //Vuelve a dibujar
 }
 
@@ -358,6 +399,47 @@ void handleKeypress(unsigned char key, int x, int y) {
     case 'Z':
       zoom +=0.1;
     break;
+
+    case 'w':
+      xI +=5;
+    break;
+
+    case 's':
+      xI -=5;
+    break;
+
+    case 'q':
+      yI -=5;
+    break;
+
+    case 'e':
+      yI +=5;
+    break;
+
+    case 'a':
+      rotacionInput +=5;
+      yR = 1;
+    break;
+    case 'd':
+      rotacionInput -=5;
+      yR = 1;
+    break;
+
+    case 'm':
+      speed +=2;
+    break;
+
+    case 'n':
+      speed -=2;
+    break;
+    
+    case 32:
+      if(laser == 0)
+        laser = 1;
+      else 
+        laser = 0;
+    break;
+
   }
 }
 
