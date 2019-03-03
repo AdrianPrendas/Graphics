@@ -1,0 +1,1 @@
+gcc src/helicoptero.c -o build/helicoptero  -lGL -lGLU -lglut

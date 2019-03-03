@@ -210,11 +210,13 @@ void dibujarPieIzquierdo(){
   //pie izquierdo
 }
 
+GLint disparo = 25;
+
 void dibujarEsferasDelTrenDeAtterizaje(){
   
-  glColor4ub(255, 0, 0, 0);   //Rojo
+  glColor4ub(255, 0, 0, 255);   //Rojo
   glPushMatrix();
-    glTranslatef(25, -28, 15); //x, y, z
+    glTranslatef(disparo, -28, 15); //x, y, z
     //glScalef(0.7,0.5,0.5);
     glRotatef(90, 0, 1, 0); //rotando la esfera en el eje (x) y z
     glutSolidSphere(3, 20, 5); //tamaño de la esfera, meridianos, paralelos
@@ -239,7 +241,7 @@ void dibujarEsferasDelTrenDeAtterizaje(){
 
   
   glPushMatrix();
-    glTranslatef(25, -28, -17); //x, y, z
+    glTranslatef(disparo, -28, -17); //x, y, z
     //glScalef(0.7,0.5,0.5);
     glRotatef(90, 0, 1, 0); //rotando la esfera en el eje (x) y z
     glutSolidSphere(3, 20, 5); //tamaño de la esfera, meridianos, paralelos
@@ -314,7 +316,7 @@ void dispararLaser(){
 void dibujarHelicoptero () {
 
   glPushMatrix();
-
+    glScalef(0.6,0.6,0.6);
     glTranslatef(xI,yI,zI);
     glRotatef(rotacionInput,xR,yR,zR);
 
@@ -396,7 +398,7 @@ void handleKeypress(unsigned char key, int x, int y) {
       zoom -=0.1;
     break;
 
-    case 'Z':
+    case 'x':
       zoom +=0.1;
     break;
 
@@ -438,6 +440,17 @@ void handleKeypress(unsigned char key, int x, int y) {
         laser = 1;
       else 
         laser = 0;
+    break;
+
+    case 'v':
+      if (disparo >= 500)
+        disparo = 25;
+      else
+        disparo +=50;
+    break;
+
+    case 'c':
+      disparo =25;
     break;
 
   }
