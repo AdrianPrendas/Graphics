@@ -1,8 +1,10 @@
 //#include <windows.h>
 #include <GL/glut.h>
-
 #include <math.h>
 #include "TGATextura.h"
+#include <cstdlib>
+#include <ctime>
+#include <stdio.h>
 
 GLfloat LIGHT_POS = 50.0f; //The length of each side of the cube
 GLfloat BOX_HEIGHT = 7.0f; //The height of the box off of the ground
@@ -10,7 +12,7 @@ GLfloat FLOOR_SIZE = 25.0f; //The length of each side of the floor
 
 GLfloat Zoom = 1;
 
-GLfloat Luz = 0.5;
+GLfloat Luz = 0.1;
 GLfloat Transparencia = 150; // reflejo del piso
 
 GLint spinX = 0, spinY = 0;
@@ -33,7 +35,36 @@ float inclinacion = 30;
 int rotacion = 0;
 bool relleno = false;
 
-GLfloat tambaleo = 0;
+
+//Posición de la luz
+GLfloat rX = 0;
+GLfloat rY = 7.5;
+GLfloat rZ = 0;
+//luz keypress
+GLint isRightKeyPressed = false;
+GLint isLeftKeyPressed  = false;
+GLint isUpKeyPressed    = false;
+GLint isDownKeyPressed  = false;
+///
+
+///direccion del balon
+GLfloat bx = -10;
+GLfloat by = 1;
+GLfloat bz = 15;
+bool balonEnMovimiento = false;
+int direccionBalon = 0;
+float rebote = 12;
+
+bool boolx = false;
+bool booly = false;
+bool boolz = false;
+
+int LIMITZ = 15;
+int LIMITX = 15;
+
+float VELOCIDAD_INIT = 0.3;
+float velocidad = VELOCIDAD_INIT;
+float REDUCCION = 0.0003;
 
 //////////////////////////////////////////////////////////foto
 void image(void) {
@@ -299,6 +330,14 @@ void dibujarCabina(){
     glRotatef(90, 0, 1, 0); //rotando la esfera en el eje (x) y z
     glutSolidSphere(40, 30, 10); //tamaño de la esfera, meridianos, paralelos
   glPopMatrix();
+
+  glPushMatrix(); //este scope asila ala esfera para que rote individualmente del cubo
+    glColor4ub(0, 0, 255, 0);   //Rojo
+    //glRotatef(Rotacion, 0, -1, 0); //Para rotar la esfera
+    glTranslatef(10,-20,10);
+    glScalef(0.02,0.02,0.02);
+    glutSolidSphere(20, 30, 10); //tamaño de la esfera, meridianos, paralelos
+  glPopMatrix();
 }
 
 GLfloat Rotacion2 = 0;
@@ -342,6 +381,14 @@ void dibujarAspas () {
 
 void dibujarHelicoptero () {
 
+  /*
+  printf("\n");
+  printf("x: %.2f\n", rX );
+  printf("y: %.2f\n", rY );
+  printf("z: %.2f\n", rZ );
+  printf("\n");
+  */
+
   glPushMatrix();
     glScalef(0.6,0.6,0.6);
 
@@ -379,17 +426,17 @@ void glass(){
     glPushMatrix();
       glTranslatef(0,2,0);
       glBegin(GL_QUADS); //tamaño del cubo
-        glVertex3f(27,0,23);
-        glVertex3f(-27,0,23);
-        glVertex3f(-27,0,-23);
-        glVertex3f(27,0,-23);
+        glVertex3f(29,0,23);
+        glVertex3f(-29,0,23);
+        glVertex3f(-29,0,-23);
+        glVertex3f(29,0,-23);
       glEnd();
     glPopMatrix();
     glDisable(GL_BLEND);
 }
 
 void foot(int x, int z){
-    glColor4ub(0, 0, 255, 200);
+    glColor4ub(255, 255, 0, 0);
     glPushMatrix();
       glTranslatef(x,-12,z);
       glScalef(3,25,3);
@@ -397,7 +444,7 @@ void foot(int x, int z){
     glPopMatrix();
 }
 
-void marcoA(int x){
+void marcoA(GLfloat x){
     glColor4ub(255, 255, 0, 0);
     glPushMatrix();
       glTranslatef(x,0,0);
@@ -406,8 +453,8 @@ void marcoA(int x){
     glPopMatrix();
 }
 
-void marcoB(int x){
-    glColor4ub(255, 0, 255, 0);
+void marcoB(GLfloat x){
+    glColor4ub(255, 255, 0, 0);
     glPushMatrix();
         glRotatef(90,0,1,0);
       glTranslatef(x,0,0);
@@ -476,36 +523,37 @@ GLint Meridianos = 0;
 void drawBall(void) {
 
   glPushMatrix();
-
-  glTranslatef(0, 0, -16);
-
-  glRotatef(90, 1, 0, 0);
-  glRotatef(rotate, 0, 0, 1);
+    glTranslatef(0, 0, -16);
+    if(balonEnMovimiento){
+      glRotated(spin,boolx,0,0);
+      glRotated(spin,0,booly,0);
+      glRotated(spin,0,0,boolz);
+    }
     glEnable(GL_TEXTURE_2D);
-  glBindTexture(GL_TEXTURE_2D,texturas[mTextura].ID);
+    glBindTexture(GL_TEXTURE_2D,texturas[mTextura].ID);
 
-  GLUquadricObj *sphere=NULL;
-  sphere = gluNewQuadric();
+    GLUquadricObj *sphere=NULL;
+    sphere = gluNewQuadric();
 
-  gluQuadricDrawStyle(sphere, GLU_FILL);
-  gluQuadricTexture(sphere, true);
-  gluQuadricNormals(sphere, GLU_SMOOTH);
+    gluQuadricDrawStyle(sphere, GLU_FILL);
+    gluQuadricTexture(sphere, true);
+    gluQuadricNormals(sphere, GLU_SMOOTH);
 
-  glColor4ub(255, 255, 255, 0);
+    glColor4ub(255, 255, 255, 0);
 
-  gluSphere(sphere, 3+cerca, 24, 24);
+    gluSphere(sphere, 3+cerca, 24, 24);
 
-  if (Meridianos == 1) {
+    if (Meridianos == 1) {
       glColor4ub(25, 112, 112, 255);
       glutWireSphere(3.01+cerca, 24, 24);
-  }
+    }
 
-  glColor4ub(255, 255, 255, 0);
+    glColor4ub(255, 255, 255, 0);
 
   glPopMatrix();
-  glDisable(GL_TEXTURE_2D);
+    glDisable(GL_TEXTURE_2D);
 
-  gluDeleteQuadric(sphere);
+    gluDeleteQuadric(sphere);
 }
 ////////////////////////////////////////////////////////////////////////////PELOTA
 
@@ -517,8 +565,8 @@ void drawTable(){
         foot(-26,-22);
         foot(-26,22);
         foot(26,-22);
-        marcoA(28);
-        marcoA(-28);
+        marcoA(28.5);
+        marcoA(-28.5);
         marcoB(22);
         marcoB(-22);
         glass();
@@ -557,7 +605,7 @@ void drawFloor(){
     for(int i=0;i<Cuadros;i++){
        for(int j=0;j<Cuadros;j++){
             if((i+j)%2==0){
-                glColor4ub(25, 25, 112,Transparencia);
+                glColor4ub(0, 0, 0,Transparencia);
             }else{
                 glColor4ub(112, 112, 112,Transparencia);
             }
@@ -689,11 +737,11 @@ void drawScene() {
 
   GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
   GLfloat diffuseMaterial[] = { 1.0, 1.0, 1.0, 0.0 };
-  GLfloat lmodel_ambient[] = { Luz, Luz, Luz, Luz };
+  GLfloat lmodel_ambient[] = { Luz, Luz, Luz, Luz};
 
-  GLfloat lightColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
+  GLfloat lightColor[] = {2.0f, 2.0f, 2.0f, 2.0f};
 
-  GLfloat lightPos[] = {LIGHT_POS/2, LIGHT_POS, LIGHT_POS/2, 0};
+  GLfloat lightPos[] = {rX, rY, rZ, 1};
 
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
@@ -706,8 +754,7 @@ void drawScene() {
   glRotatef(spinX, 1, 0, 0);
   glRotatef(spinY, 0, 1, 0);
 
-  if (Rot == 1)
-      glRotatef(Rotacion, 0, 1, 0);
+  
 
   glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor);
   glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
@@ -718,13 +765,42 @@ void drawScene() {
   glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
 
   glPushMatrix();
-    glColor4ub(255, 255, 0, 0);
-    glTranslatef(0, LIGHT_POS, 0);
+    glColor4ub(255, 255, 0, 1);
+    glTranslatef(rX, rY-1, rZ);
     glutSolidSphere(0.3, 50, 50);
   glPopMatrix();
 
+  /*glPushMatrix();
+    glColor4ub(255, 255, 0, 0);
+    glTranslatef(x, LIGHT_POS, 0);
+    glutSolidSphere(0.3, 50, 50);
+  glPopMatrix();*/
+  //cuatro esquinas //**
   glPushMatrix();
-    glTranslatef(9,3.9,10);
+    glColor4ub(255, 0, 0, 1);
+    glTranslatef(15, 0, 15);
+    glutSolidSphere(0.3, 50, 50);
+  glPopMatrix();
+  glPushMatrix();
+    glColor4ub(255, 0, 0, 1);
+    glTranslatef(-15, 0, -12);
+    glutSolidSphere(0.3, 50, 50);
+  glPopMatrix();
+  glPushMatrix();
+    glColor4ub(255, 0, 0, 1);
+    glTranslatef(-15, 0, 15);
+    glutSolidSphere(0.3, 50, 50);
+  glPopMatrix();
+  glPushMatrix();
+    glColor4ub(255, 0, 0, 1);
+    glTranslatef(15, 0, -12);
+    glutSolidSphere(0.3, 50, 50);
+  glPopMatrix();
+  //cuatro esquinas //**
+  
+
+  glPushMatrix();
+    glTranslatef(-9,3.9,-8);
     glScalef(0.15,0.15,0.15);
     drawTable();
   glPopMatrix();
@@ -735,10 +811,6 @@ void drawScene() {
     glPopMatrix();
 
     glPushMatrix();
-        //glTranslatef(0, 0, 0);
-        //glRotatef(Rotacion2, 0, 1, 0); 
-        //glRotatef(tambaleo, 1, 0, 0); 
-
         glTranslatef(x, 0, z);
         glRotated(spin,0,1,0);
         glRotated(inclinacion,1,0,0);
@@ -748,15 +820,16 @@ void drawScene() {
     glPopMatrix();
 
   glPushMatrix();
-    //glRotated(adrot,1,0,0);
-    glTranslatef(-10,1,15);
+    glTranslatef(bx,by,bz);
+    printf("balon x:%.2f, y:%.2f, z:%.2f, rebote:%.2f velocidad:%.2f \n", bx, by, bz, rebote, velocidad);
     glScalef(0.4,0.4,0.4);
     drawBall();
   glPopMatrix();
 
   glPushMatrix();
+    glTranslatef(rX,rY,rZ);
     glRotated(135,0,1,0);
-    glTranslatef(0,10,0);
+    glRotated(Rot,0,1,0);
     glScalef(0.1,0.1,0.1);
     dibujarHelicoptero();
   glPopMatrix();
@@ -784,19 +857,46 @@ void drawScene() {
   //buffer is 1
   glPushMatrix();
 
+    glScalef(1, -1, 1);
+    glTranslatef(0, 0, 0);
 
-    glTranslatef(x, 0, z);
-    glRotated(spin,0,1,0);
-    glRotated(inclinacion,1,0,0);
-    glScalef(0.03,0.03,0.03);
+    glPushMatrix();
+    glTranslatef(-9,3.9,-8);
+    glScalef(0.15,0.15,0.15);
+    drawTable();
+  glPopMatrix();
 
-    //glScalef(1, -1, 1);
-    //glScalef(0.03,0.03,0.03);
-    //glTranslatef(0, BOX_HEIGHT, 0);
-    //glRotatef(Rotacion2, 0, 1, 0); 
-    //glRotatef(tambaleo, 1, 0, 0); 
-    //Aquí se dibujan los objetos que se van a reflejar
-    dibujarTrompo();
+    glPushMatrix();
+        glTranslatef(8,7,-8);
+        drawUmbrella();
+    glPopMatrix();
+
+    glPushMatrix();
+        glTranslatef(x, 0, z);
+        glRotated(spin,0,1,0);
+        glRotated(inclinacion,1,0,0);
+        glScalef(0.03,0.03,0.03);
+
+        dibujarTrompo();
+    glPopMatrix();
+
+  glPushMatrix();
+    //glRotated(180,boolx,booly,boolz);
+    glTranslatef(bx,by,bz);
+    glScalef(0.4,0.4,0.4);
+    drawBall();
+  glPopMatrix();
+
+  glPushMatrix();
+    glTranslatef(rX,rY,rZ);
+    glRotated(135,0,1,0);
+    glRotated(Rot,0,1,0);
+    glScalef(0.1,0.1,0.1);
+    dibujarHelicoptero();
+  glPopMatrix();
+
+
+    
   glPopMatrix();
 
   glDisable(GL_STENCIL_TEST); //Disable using the stencil buffer
@@ -810,25 +910,33 @@ void drawScene() {
   glutSwapBuffers();
 }
 
+int getRandom(int n){
+  
+  return std::rand() % n + 1;
+}
+
 void handleKeypress(unsigned char key, int x, int y) {
   switch (key) {
     case 27: //Escape key
          exit(0);
     break;
 
-    case 'F': //Posición de la luz
-        ++LIGHT_POS;
+    case 'r': //giro del helicoptero
+
+      Rot +=2;
+      if(Rot>360){
+        Rot = 0;
+      }
+        
     break;
 
-    case 'f': //Posición de la luz
-        --LIGHT_POS;
-    break;
+    case 'R': // giro del helicoptero en centido contrario
 
-    case 'r': //La esfera gira
-         if (Rot == 1)
-             Rot = 0;
-         else
-             Rot = 1;
+    Rot -=2;
+      if(Rot<0){
+        Rot = 360;
+      }
+
     break;
 
     case 'l': //Luz
@@ -851,13 +959,88 @@ void handleKeypress(unsigned char key, int x, int y) {
          if (++Transparencia > 255)
              Transparencia = 0;
     break;
-    case 'm':
-      tambaleo += 2;
+
+    case 'e':
+        ++rY;
     break;
-    case 'n':
-      tambaleo -= 2;
+
+    case 'q':
+      
+      if (rY > 2.50)
+        --rY;
+
+    break;
+
+    case 'b':
+      balonEnMovimiento = true;
+      direccionBalon = getRandom(5);
+      rebote = 12;
+      velocidad=VELOCIDAD_INIT;
     break;
   }
+}
+
+void handleSpecialKeypress(int key, int x, int y) {
+
+ switch (key) {
+    case GLUT_KEY_LEFT:
+         isLeftKeyPressed = true;
+         if (!isRightKeyPressed) {
+             if(rX >= -10){
+                --rX;
+                
+             }
+
+         }
+    break;
+
+    case GLUT_KEY_RIGHT:
+         isRightKeyPressed = true;
+         if (!isLeftKeyPressed) {
+             if (rX <= 10){
+                ++rX;
+             }
+         }
+    break;
+
+    case GLUT_KEY_UP:
+         isUpKeyPressed = true;
+         if (!isDownKeyPressed) {
+             if (rZ >= -10)
+                --rZ;
+         }
+             
+    break;
+
+    case GLUT_KEY_DOWN:
+         isDownKeyPressed = true;
+         if (!isUpKeyPressed) {
+          if (rZ <= 10)
+                ++rZ;
+         }
+    break;
+ }
+}
+
+void handleSpecialKeyReleased(int key, int x, int y) {
+ switch (key) {
+ case GLUT_KEY_LEFT:
+      isLeftKeyPressed = false;
+ break;
+
+ case GLUT_KEY_RIGHT:
+      isRightKeyPressed = false;
+ break;
+
+ case GLUT_KEY_UP:
+      isUpKeyPressed = false;
+ break;
+
+ case GLUT_KEY_DOWN:
+      isDownKeyPressed = false;
+ break;
+
+ }
 }
 
 void init() {
@@ -869,10 +1052,10 @@ void init() {
   glEnable(GL_COLOR_MATERIAL);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-  if(!cargarTGA("./data/Piso.tga", &texturas[0]) ||
+  if(!cargarTGA("./data/Piso5.tga", &texturas[0]) ||
      !cargarTGA("./data/Star.tga", &texturas[1]) ||
      !cargarTGA("./data/Bola.tga", &texturas[2]) ||
-     !cargarTGA("./data/yo2.tga", &texturas[3])){
+     !cargarTGA("./data/yoG.tga", &texturas[3])){
         printf("Error cargando textura");
         exit(0);
      }
@@ -885,6 +1068,85 @@ void handleResize(int w, int h) {
   gluPerspective(45.0, (float)w/ (float)h, 1.0, 200.0);
 }
 
+
+void moveball(){
+  if(balonEnMovimiento){
+    velocidad-=REDUCCION;
+    switch(direccionBalon){
+      case 1:
+        if(boolx)
+          bx+= velocidad;
+        else
+          bx-= velocidad;
+      break;
+
+      case 2:
+        if(boolz)
+          bz+= velocidad;
+        else
+          bz-= velocidad;
+      break;
+
+      case 3:
+        if(boolx)
+          bx+= velocidad;
+        else
+          bx-= velocidad;
+        if(boolz)
+          bz+= velocidad;
+        else
+          bz-= velocidad;
+      break;
+      case 4:
+      if(boolx)
+          bx+= velocidad;
+        else
+          bx-= velocidad;
+        if(boolz)
+          bz+= velocidad;
+        else
+          bz-= velocidad;
+       break;
+       case 5:break;
+    }
+
+    if(bx > LIMITX)
+      boolx = false;
+
+    if(bz > 20)
+      boolz = false;
+
+    if(bx < -LIMITX)
+      boolx = true;
+    
+    if(bz < -5)
+      boolz = true;
+
+
+    if(rebote > 1){
+
+      if(booly)
+        by+=velocidad;
+      else
+        by-=velocidad;
+
+      if(by > rebote)
+        booly=false;
+        
+      if(by < 2){
+        rebote--;
+        booly=true;
+      }
+
+    }else{
+      by=1;
+      balonEnMovimiento = false;
+      rebote = 12;
+      velocidad=VELOCIDAD_INIT;
+    }
+  }
+}
+
 void spinDisplay(void) {
  Rotacion2 += 5;
  adrot += 1.05;
@@ -892,7 +1154,7 @@ void spinDisplay(void) {
 
     GLfloat r;
      if(angulo<25){
-        angulo+=0.002;
+        angulo+=0.02;
      }
 
      r =10- pow(2.7182,0.1*angulo);
@@ -910,8 +1172,10 @@ void spinDisplay(void) {
        spin = 0;
 
 
-if (sube < 78)
-sube += 0.01;
+  if (sube < 78)
+    sube += 0.01;
+
+  moveball();
 
 glutPostRedisplay(); //Vuelve a dibujar
 }
@@ -943,6 +1207,8 @@ void mouseMotion(int x, int y) {
 
 // g++ src/escena.cpp -o escena -lGL -lGLU -lglut
 int main(int argc, char** argv) {
+  std::srand(std::time(0));
+
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH | GLUT_STENCIL);
   glutInitWindowSize(600, 600);
@@ -955,6 +1221,9 @@ int main(int argc, char** argv) {
   glutReshapeFunc(handleResize);
   glutMouseFunc(mouse); //Activa los controles del mouse
   glutMotionFunc(mouseMotion);
+
+  glutSpecialFunc(handleSpecialKeypress);
+  glutSpecialUpFunc(handleSpecialKeyReleased);
 
   glutMainLoop();
 
