@@ -1,4 +1,3 @@
-
 #include <GL/gl.h>
 #include <math.h>
 #include "TGATextura.h"
@@ -20,6 +19,232 @@ GLint Rot = 0;
 GLfloat Rotacion = 0;
 GLfloat Pausa = 0;
 
+
+void dibujarBanca(){
+GLUquadricObj *Cubo;
+Cubo = gluNewQuadric();
+glPushMatrix();
+glTranslatef(-70,-63,-160);
+glScalef(3,3,10);
+glRotatef(90,0,1,0);
+
+glColor4ub(179, 128, 80, 1.0);
+glPushMatrix();
+glPushMatrix();
+glTranslatef(-9,-5.5,-5);
+glScalef(0.3,3,0.2);
+glutSolidCube(1);
+glPopMatrix();
+
+glPushMatrix();
+glTranslatef(-5,-5.5,-5);
+glScalef(0.3,3,0.2);
+glutSolidCube(1);
+glPopMatrix();
+
+glPushMatrix();
+glTranslatef(-9,-4.5,-8);
+glScalef(0.3,5,0.2);
+glutSolidCube(1);
+glPopMatrix();
+
+glPushMatrix();
+glTranslatef(-5,-4.5,-8);
+glScalef(0.3,5,0.2);
+glutSolidCube(1);
+glPopMatrix();
+
+glPushMatrix();
+glTranslatef(-5,-4.1,-6.5);
+glScalef(0.3,0.2,3);
+glutSolidCube(1);
+glPopMatrix();
+
+glPushMatrix();
+glTranslatef(-9,-4.1,-6.5);
+glScalef(0.3,0.2,3);
+glutSolidCube(1);
+glPopMatrix();
+
+glPushMatrix();
+glTranslatef(-7,-4.1,-5);
+glScalef(4,0.2,0.3);
+glutSolidCube(1);
+glPopMatrix();
+
+glPushMatrix();
+glTranslatef(-7,-4.1,-8);
+glScalef(4,0.2,0.3);
+glutSolidCube(1);
+glPopMatrix();
+
+glPushMatrix();
+glTranslatef(-7,-2,-8);
+glScalef(4.2,0.2,0.3);
+glutSolidCube(1);
+glPopMatrix();
+
+
+glPushMatrix();
+glColor4ub(66, 37, 0,200);
+glTranslatef(-7,-4,-6.5);
+glScalef(4.2,0.1,3.2);
+glutSolidCube(1);
+glPopMatrix();
+
+glPushMatrix();
+glTranslatef(-7,-3,-8);
+glScalef(3.7,2,0.1);
+glutSolidCube(1);
+glPopMatrix();
+
+glPopMatrix();
+glPopMatrix();
+gluDeleteQuadric(Cubo);
+}
+
+void drawArmazon(){
+
+  GLUquadricObj *Tubo;
+  Tubo = gluNewQuadric();
+  gluQuadricNormals(Tubo, GLU_SMOOTH);
+
+  GLfloat largo = 12;
+  GLint angulo = 35;
+
+
+  glPushMatrix();
+    glTranslatef(0, 70, 0);
+    glRotatef(angulo, 0,1,0);
+    glRotatef(-angulo, 1,0,0);
+    gluCylinder(Tubo, 0.5 , 0.5, largo, 10, 6);
+  glPopMatrix();
+
+  glPushMatrix();
+    glTranslatef(0, 70, 0);
+    glRotatef(-angulo, 0,1,0);
+    glRotatef(-angulo, 1,0,0);
+    gluCylinder(Tubo, 0.5 , 0.5, largo, 10, 6);
+  glPopMatrix();
+
+  glPushMatrix();
+    glTranslatef(0, 70, 0);
+    glRotatef(-angulo-110, 0,1,0);
+    glRotatef(-angulo, 1,0,0);
+    gluCylinder(Tubo, 0.5 , 0.5, largo, 10, 6);
+  glPopMatrix();
+
+  glPushMatrix();
+    glTranslatef(0, 70, 0);
+    glRotatef(angulo+110, 0,1,0);
+    glRotatef(-angulo, 1,0,0);
+    gluCylinder(Tubo, 0.5 , 0.5, largo, 10, 6);
+  glPopMatrix();
+
+}
+
+void DrawCabina(){
+
+  glPushMatrix();
+    glTranslatef(0, 0, 0);
+    glRotatef(90, 0,1,0);
+    glPushMatrix();
+      glTranslatef(0,-13,8);
+      drawArmazon();
+      glPushMatrix();
+        glTranslatef(0,153,0);
+        glRotatef(180, 1,0,0);
+        drawArmazon();
+      glPopMatrix();
+    glPopMatrix();
+
+  
+
+    glPushMatrix();
+      glRotatef(90,0,1,0);
+      //glTranslatef(-8,65,0);
+      glTranslatef(-8,78,0);
+      glColor4ub(120, 120,120, 250);   //Rojo
+      glRotatef(90, 0, 1, 0);
+      glScalef(0.3, 0.3, 0.3);
+      glutWireSphere(25, 10, 5);
+    glPopMatrix();
+  glPopMatrix();
+}
+
+
+
+
+void DrawBase(){
+
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   //Patas
+   GLUquadricObj *pata;
+   pata = gluNewQuadric();
+   gluQuadricNormals(pata, GLU_SMOOTH);
+   GLint Lados = 20; //de los tubos
+   GLint largo = 102;
+   //1
+
+   glPushMatrix();
+    glTranslatef(0, 0, 25);
+    glRotatef(75, 1, 0, 0);  //angulo, x,y,z
+    glRotatef(20, 0, -1, 0); //angulo, x,y,z
+    glColor4ub(0, 0,200, 0);   //Rojo
+    gluCylinder(pata, 2, 2, largo, Lados, 2); //base,top,height,slices,stacks
+   glPopMatrix();
+   //2
+   glPushMatrix();
+    glTranslatef(0, 0, 25);
+    glRotatef(75, 1, 0, 0);   //angulo, x,y,z
+    glRotatef(-20, 0, -1, 0); //angulo, x,y,z
+    glColor4ub(0, 0,200, 0);   //Rojo
+    gluCylinder(pata, 2, 2, largo, Lados, 2); //base,top,height,slices,stacks
+   glPopMatrix();
+
+   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   // ALAMBRES
+   //1
+   glPushMatrix();
+    glColor4ub(170, 170, 170, 1);
+    glTranslatef(0, 0, 25);
+    glRotatef(45, 1, 0, 0);   //angulo, x,y,z
+    glRotatef(-20, 0, -1, 0); //angulo, x,y,z
+    glColor4ub(255, 55, 79, 1);
+    gluCylinder(pata, 0.5, 0.5, 110, Lados, 2); //base,top,height,slices,stacks
+   glPopMatrix();
+   //2
+   glPushMatrix();
+    glColor4ub(170, 170, 170, 1);
+    glTranslatef(0, 0, 25);
+    glRotatef(45, 1, 0, 0);  //angulo, x,y,z
+    glRotatef(20, 0, -1, 0); //angulo, x,y,z
+    glColor4ub(255, 55, 79, 1);
+    gluCylinder(pata, 0.5, 0.5, 110, Lados, 2); //base,top,height,slices,stacks
+  glPopMatrix();
+
+   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  gluDeleteQuadric(pata);
+
+
+   // CUBES
+   //1
+   glPushMatrix();
+    glColor4ub(100, 100, 100, 1);
+    glTranslatef(-40, -85, 100); //x, y(altura), z
+    glScaled(1, 2, 0.6);
+    glutSolidCube(10);
+  glPopMatrix();
+   //2
+   glPushMatrix();
+    glColor4ub(100, 100, 100, 1);
+    glTranslatef(40, -85, 100); //x, y(altura), z
+    glScaled(1, 2, 0.6);
+    glutSolidCube(10);
+   glPopMatrix();
+
+}
+
 void DrawFerrisWhell(void)
 {
    GLUquadricObj *Tubo;
@@ -29,143 +254,102 @@ void DrawFerrisWhell(void)
    GLint Lados = 20; //de los tubos
    GLint LadosRueda = 24;
 
-   GLfloat Grosor = 0.5;
+   GLfloat Grosor = 0.7;
    glColor4ub(255, 0, 0, 0); //Color del objeto
 
    glPushMatrix();
-   glRotatef(Rotacion, 0, 0, -1); //Rotaci�n de la rueda
+  glRotatef(Rotacion, 0, 0, 1); //Rotaci�n de la rueda
+  glPushMatrix();
+    
 
-   //Rueda de lado
-   glPushMatrix();
-   glutSolidTorus(Grosor + 0.2, 64, 6, LadosRueda);
-   glTranslatef(0, 0, -1.2);
-   glutSolidTorus(Grosor + 0.2, 4, 6, LadosRueda);
-   glPopMatrix();
+    //Rueda de lado
+    glPushMatrix();
+      glColor4ub(0, 250, 0, 0); //verde
+      glutSolidTorus(Grosor + 0.2, 64, 6, LadosRueda);
+      glTranslatef(0, 0, -1.2);
+      glutSolidTorus(Grosor + 0.2, 4, 6, LadosRueda);
+    glPopMatrix();
 
-   //Rueda de lado
-   glPushMatrix();
-   glTranslatef(0, 0, 16);
-   glutSolidTorus(Grosor + 0.2, 64, 6, LadosRueda);
-   glTranslatef(0, 0, 1.2);
-   glutSolidTorus(Grosor + 0.2, 4, 6, LadosRueda);
-   glPopMatrix();
+    //Rueda de lado
+    glPushMatrix();
+      glColor4ub(0, 250, 0, 0); //verde
+      glTranslatef(0, 0, 16);
+      glutSolidTorus(Grosor + 0.2, 64, 6, LadosRueda);
+      glTranslatef(0, 0, 1.2);
+      glutSolidTorus(Grosor + 0.2, 4, 6, LadosRueda);
+    glPopMatrix();
 
-   glPushMatrix(); //Rueda �nica
-   glTranslatef(0, 0, 8);
-   glutSolidTorus(Grosor + 0.2, 58, 6, LadosRueda);
-   glPopMatrix();
+    glPushMatrix(); //Rueda �nica
+      glColor4ub(233, 189, 21, 0); //amarillo
+      glTranslatef(0, 0, 8);
+      glutSolidTorus(Grosor + 0.2, 58, 6, LadosRueda);
+    glPopMatrix();
 
-   glPushMatrix(); //Eje central
-   glTranslatef(0, 0, -8);
-   gluCylinder(Tubo, 3 * Grosor, 3 * Grosor, 32, Lados, 6);
-   glPopMatrix();
+    glPushMatrix(); //Eje central
+      glTranslatef(0, 0, -8);
+      gluCylinder(Tubo, 3 * Grosor, 3 * Grosor, 32, Lados, 6);
+    glPopMatrix();
 
    // CABINAS
    //1
-   glPushMatrix();
-   glTranslatef(0, 0, 0);
-   //glRotatef(75, 1, 0, 0);  //angulo, x,y,z
-   glColor4ub(79, 130, 255, 1);
-   gluCylinder(Tubo, 0.8, 0.8, 20, Lados, 2); //base,top,height,slices,stacks
-   glPopMatrix();
+    glPushMatrix();
+      glTranslatef(0, 0, 0);
+      //glRotatef(75, 1, 0, 0);  //angulo, x,y,z
+      glColor4ub(79, 130, 255, 1);
+      gluCylinder(Tubo, 0.8, 0.8, 20, Lados, 2); //base,top,height,slices,stacks
+    glPopMatrix();
 
 
-   glPopMatrix();
+  
+  glPopMatrix();
    //#####################################################
    // Dibujar las cosas que no se mueven
 
    //Bola derecha
-   glPushMatrix();
-   glColor4ub(255, 255, 0, 1);
-   glTranslatef(0, 0, 25);
-   glutSolidSphere(3, 20, 20);
-   glPopMatrix();
-   //Bola izquierda
-   glPushMatrix();
-   glColor4ub(255, 255, 0, 1);
-   glTranslatef(0, 0, -11);
-   glutSolidSphere(3, 20, 20);
-   glPopMatrix();
+    glPushMatrix();
+      glColor4ub(255, 0, 0, 1);
+      glTranslatef(0, 0, 25);
+      glutSolidSphere(3, 20, 20);
+    glPopMatrix();
+    //Bola izquierda
+    glPushMatrix();
+      glColor4ub(255, 255, 0, 1);
+      glTranslatef(0, 0, -11);
+      glutSolidSphere(3, 20, 20);
+    glPopMatrix();
 
-   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   //Patas
-   GLUquadricObj *pata;
-   pata = gluNewQuadric();
-   gluQuadricNormals(pata, GLU_SMOOTH);
-   //1
-   glPushMatrix();
-   glTranslatef(0, 0, 25);
-   glRotatef(75, 1, 0, 0);  //angulo, x,y,z
-   glRotatef(20, 0, -1, 0); //angulo, x,y,z
-   glColor4ub(255, 255, 0, 1);
-   gluCylinder(pata, 2, 2, 90, Lados, 2); //base,top,height,slices,stacks
-   glPopMatrix();
-   //2
-   glPushMatrix();
-   glTranslatef(0, 0, 25);
-   glRotatef(75, 1, 0, 0);   //angulo, x,y,z
-   glRotatef(-20, 0, -1, 0); //angulo, x,y,z
-   glColor4ub(255, 255, 0, 1);
-   gluCylinder(pata, 2, 2, 90, Lados, 2); //base,top,height,slices,stacks
-   glPopMatrix();
-
-   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   // ALAMBRES
-   //1
-   glPushMatrix();
-   glTranslatef(0, 0, 25);
-   glRotatef(45, 1, 0, 0);   //angulo, x,y,z
-   glRotatef(-20, 0, -1, 0); //angulo, x,y,z
-   glColor4ub(255, 55, 79, 1);
-   gluCylinder(pata, 0.5, 0.5, 110, Lados, 2); //base,top,height,slices,stacks
-   glPopMatrix();
-   //2
-   glPushMatrix();
-   glTranslatef(0, 0, 25);
-   glRotatef(45, 1, 0, 0);  //angulo, x,y,z
-   glRotatef(20, 0, -1, 0); //angulo, x,y,z
-   glColor4ub(255, 55, 79, 1);
-   gluCylinder(pata, 0.5, 0.5, 110, Lados, 2); //base,top,height,slices,stacks
-   glPopMatrix();
-
-   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   // CUBES
-   //1
-   glPushMatrix();
-   glColor4ub(255, 55, 79, 1);
-   glTranslatef(-40, -75, 100); //x, y(altura), z
-   glScaled(1, 2, 0.6);
-   glutSolidCube(10);
-   glPopMatrix();
-   //2
-   glPushMatrix();
-   glColor4ub(255, 55, 79, 1);
-   glTranslatef(40, -75, 100); //x, y(altura), z
-   glScaled(1, 2, 0.6);
-   glutSolidCube(10);
-   glPopMatrix();
 
    for(int i=0;i<360;i+=15){
     glPushMatrix(); //Rayos
+    glColor4ub(200, 0, 0, 1);
     glRotatef(90, 0, 1, 0);
     glPushMatrix(); //Rayos
-        glTranslatef(4, 0, 0);
+        glTranslatef(2, 0, 0);
         glRotatef(i, 1, 0, 0);
-        glRotatef(15, 0, -1, 0);
-        gluCylinder(Tubo, Grosor-0.2, Grosor-0.2, 70, 6, Lados); //Eje central
+        glRotatef(16, 0, -1, 0);
+        gluCylinder(Tubo, Grosor-0.2, Grosor-0.2, 67, 6, Lados); //Eje central
      glPopMatrix();
      glPopMatrix();
     }
 
     for(int i=0;i<360;i+=15){
     glPushMatrix(); //Rayos
-    glRotatef(90, 0, 1, 0);
-    glPushMatrix(); //Rayos
+      glRotatef(90, 0, 1, 0);
+      glPushMatrix(); //Rayos
+        glColor4ub(200, 0, 0, 1);
         glTranslatef(-18, 0, 0);
         glRotatef(i, 1, 0, 0);
-        glRotatef(15, 0, 1, 0);
-        gluCylinder(Tubo, Grosor-0.2, Grosor-0.2, 70, 6, Lados); //Eje central
-     glPopMatrix();
+        glRotatef(16, 0, 1, 0);
+        gluCylinder(Tubo, Grosor-0.2, Grosor-0.2, 67, 6, Lados); //Eje central
+      glPopMatrix();
+
+      glPushMatrix();
+      glColor4ub(100, 100, 100, 1);
+        glTranslatef(-15.5, 0, 0);
+        glRotatef(i, 1, 0, 0);
+        DrawCabina();
+      glPopMatrix();
+
      glPopMatrix();
      }
 
@@ -173,7 +357,12 @@ void DrawFerrisWhell(void)
 
    //#####################################################
    gluDeleteQuadric(Tubo);
-   gluDeleteQuadric(pata);
+   
+
+
+   
+
+   glPopMatrix();
 }
 
 void drawLake(void)
@@ -214,6 +403,25 @@ void drawFloor()
    glEnd();
 }
 
+void dibujar2bancas(int grados){
+  glPushMatrix();
+    glRotatef(grados,0, 1, 0);
+    glPushMatrix();
+          glTranslatef(0,-65,120);
+          glRotatef(90,0,1,0);
+          glScalef(0.2,0.2,0.2);
+          dibujarBanca();
+      glPopMatrix();
+
+         glPushMatrix();
+          glTranslatef(30,-65,120);
+          glRotatef(90,0,1,0);
+          glScalef(0.2,0.2,0.2);
+          dibujarBanca();
+      glPopMatrix();
+    glPopMatrix();
+}
+
 void display(void)
 {
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -238,7 +446,31 @@ void display(void)
 
    glRotatef(orbitDegrees, 0, 1, 0); // orbit the Y axis
 
-   DrawFerrisWhell();
+   glPushMatrix();
+    glTranslatef(0,10,0);
+    DrawFerrisWhell();
+    DrawBase();
+    glPushMatrix();
+      glTranslatef(0,0,15);
+      glRotatef(180,0,1,0);
+      DrawBase();
+    glPopMatrix();
+   glPopMatrix();
+
+   dibujar2bancas(0);
+   dibujar2bancas(45);
+   dibujar2bancas(90);
+   dibujar2bancas(135);
+   dibujar2bancas(180);
+   dibujar2bancas(225);
+   dibujar2bancas(270);
+   dibujar2bancas(315);
+   dibujar2bancas(360);
+   
+
+
+   
+
 
    glEnable(GL_STENCIL_TEST);      //Enable using the stencil buffer
    glColorMask(0, 0, 0, 0);        //Disable drawing colors to the screen
@@ -265,7 +497,16 @@ void display(void)
    glTranslatef(0, 164, 0);
    //Aqu� se dibujan los objetos que se van a reflejar
 
-   DrawFerrisWhell();
+    glPushMatrix();
+    glTranslatef(0,10,0);
+    DrawFerrisWhell();
+    DrawBase();
+    glPushMatrix();
+      glTranslatef(0,0,15);
+      glRotatef(180,0,1,0);
+      DrawBase();
+    glPopMatrix();
+   glPopMatrix();
 
    glPopMatrix();
 
@@ -354,7 +595,7 @@ void handleKeypress(unsigned char key, int x, int y)
          Rot = 0;
       else
          Rot = 1;
-      break;
+    break;
 
    case 'M':
       VelocidadGiro += 0.01;
