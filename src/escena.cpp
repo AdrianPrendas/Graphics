@@ -13,6 +13,7 @@ GLfloat FLOOR_SIZE = 25.0f; //The length of each side of the floor
 GLfloat Zoom = 1;
 
 GLfloat Luz = 0.1;
+GLfloat Luz2 = 0.1;
 GLfloat Transparencia = 150; // reflejo del piso
 
 GLint spinX = 0, spinY = 0;
@@ -65,6 +66,67 @@ int LIMITX = 15;
 float VELOCIDAD_INIT = 0.3;
 float velocidad = VELOCIDAD_INIT;
 float REDUCCION = 0.0003;
+
+//////////////////////
+int laser = 0;
+int disparo = 25;
+
+int rotax = 0;
+int rotay = 0;
+int rotaz = 0;
+
+float rotaX = 0.0;
+float rotaY = 0.0;
+float rotaZ = 0.0;
+
+int flag = 0;
+
+
+
+
+
+void DrawLamp (void) {
+   GLUquadricObj *qobj; //Define el objeto
+   qobj = gluNewQuadric();
+
+   gluQuadricDrawStyle(qobj, GLU_FILL);
+
+   glPushMatrix();
+     glColor4ub(112, 112, 112, 0); //Rojo
+
+     glPushMatrix();
+       glTranslatef(0, 1.3, 0);
+       glRotatef(90, 1, 0, 0);
+       gluCylinder(qobj, 0.2, 1, 1.5, 8, 1);
+     glPopMatrix();
+
+     gluQuadricDrawStyle(qobj, GLU_LINE);
+     glPushMatrix();
+       glTranslatef(0, -0.2, 0);
+       glRotatef(90, 1, 0, 0);
+       gluCylinder(qobj, 1, 0.2, 0.5, 8, 1);
+     glPopMatrix();
+
+     gluQuadricDrawStyle(qobj, GLU_FILL);
+
+     glPushMatrix();
+       glTranslatef(0, -0.5, 0);
+       glRotatef(90, 1, 0, 0);
+       gluCylinder(qobj, 0.2, 0.2, 5.5, 30, 1);
+     glPopMatrix();
+
+     glPushMatrix();
+       glTranslatef(0, -5.5, 0);
+       glRotatef(90, 1, 0, 0);
+       gluCylinder(qobj, 0.2, 0.8, 1.5, 8, 1);
+     glPopMatrix();
+
+   glPopMatrix();
+
+   gluDeleteQuadric(qobj);
+//glutWireCube (4);
+}
+
 
 //////////////////////////////////////////////////////////foto
 void image(void) {
@@ -286,7 +348,7 @@ void dibujarEsferasDelTrenDeAtterizaje(){
 
   glColor4ub(255, 0, 0, 255);   //Rojo
   glPushMatrix();
-    glTranslatef(25, -28, 15); //x, y, z
+    glTranslatef(disparo, -28, 15); //x, y, z
     //glScalef(0.7,0.5,0.5);
     glRotatef(90, 0, 1, 0); //rotando la esfera en el eje (x) y z
     glutSolidSphere(3, 20, 5); //tamaño de la esfera, meridianos, paralelos
@@ -311,7 +373,7 @@ void dibujarEsferasDelTrenDeAtterizaje(){
 
 
   glPushMatrix();
-    glTranslatef(25, -28, -17); //x, y, z
+    glTranslatef(disparo, -28, -17); //x, y, z
     //glScalef(0.7,0.5,0.5);
     glRotatef(90, 0, 1, 0); //rotando la esfera en el eje (x) y z
     glutSolidSphere(3, 20, 5); //tamaño de la esfera, meridianos, paralelos
@@ -379,6 +441,22 @@ void dibujarAspas () {
   // aspas de atras
 }
 
+void dispararLaser(){
+  if (laser == 1) {
+    glLineWidth(5);
+
+    glBegin(GL_LINES);
+        glColor4ub(255, 0, 0, 0); //Rojo
+        glVertex3f( 500, -30, -15 ); 
+        glVertex3f( 0, -30, -15 ); //Línea Norte a Sur
+        glVertex3f( 500, -30,  15 ); 
+        glVertex3f( 0, -30,  15 ); //Línea Norte a Sur
+    glEnd ();
+  }else{
+    glLineWidth(1);
+  }
+}
+
 void dibujarHelicoptero () {
 
   /*
@@ -410,6 +488,7 @@ void dibujarHelicoptero () {
 
     dibujarCabina();
 
+    dispararLaser();
 
   glPopMatrix();
 }
@@ -747,7 +826,12 @@ void drawScene() {
   glLoadIdentity();
 
   glTranslatef(0, 0, -40);
+  
   glRotatef(30, 1, 0, 0);
+
+  glRotatef(rotaX, flag, 0, 0);
+  glRotatef(rotaY, 0, flag, 0);
+  glRotatef(rotaZ, 0, 0, flag);
 
   glScalef(Zoom, Zoom, Zoom);
 
@@ -763,11 +847,43 @@ void drawScene() {
   glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
   glMaterialf(GL_FRONT, GL_SHININESS, 64.0f);
   glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
+  
 
   glPushMatrix();
     glColor4ub(255, 255, 0, 1);
     glTranslatef(rX, rY-1, rZ);
     glutSolidSphere(0.3, 50, 50);
+  glPopMatrix();
+
+  glPushMatrix();
+   // ================ LUZ
+  GLfloat mat_specular2[] = { 2.0, 2.0, 2.0, 1.0 };
+  GLfloat diffuseMaterial2[] = { 2.0, 2.0, 2.0, 1.0 };
+  GLfloat lmodel_ambient2[] = { Luz2, Luz2, Luz2, Luz2 };
+
+  GLfloat lightColor2[] = {1.0f, 1.0f, 0.0f, 0.0f}; //Amarillo
+
+  GLfloat lightPos2[] = {0,0,0,1};
+
+  glLightfv(GL_LIGHT1, GL_DIFFUSE, lightColor2);
+  glLightfv(GL_LIGHT1, GL_POSITION, lightPos2);
+
+  glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuseMaterial2);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular2);
+  glMaterialf(GL_FRONT, GL_SHININESS, 65.0f);
+  glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient2);
+
+   GLfloat spot_direction2[] = {12,7,14};
+   glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 45.0); //Grados
+   glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, spot_direction2);
+   glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 2.0);
+   // ============= LUZ
+
+   glPushMatrix();
+    glColor4ub(255, 255, 0, 1);
+    glTranslatef(12, 7, 14);
+    glutSolidSphere(0.3, 50, 50);
+  glPopMatrix();
   glPopMatrix();
 
   /*glPushMatrix();
@@ -797,6 +913,11 @@ void drawScene() {
     glutSolidSphere(0.3, 50, 50);
   glPopMatrix();
   //cuatro esquinas //**
+
+  glPushMatrix();
+    glTranslatef(12,7,14);
+    DrawLamp();
+  glPopMatrix();
   
 
   glPushMatrix();
@@ -821,7 +942,7 @@ void drawScene() {
 
   glPushMatrix();
     glTranslatef(bx,by,bz);
-    printf("balon x:%.2f, y:%.2f, z:%.2f, rebote:%.2f velocidad:%.2f \n", bx, by, bz, rebote, velocidad);
+    //printf("balon x:%.2f, y:%.2f, z:%.2f, rebote:%.2f velocidad:%.2f \n", bx, by, bz, rebote, velocidad);
     glScalef(0.4,0.4,0.4);
     drawBall();
   glPopMatrix();
@@ -922,27 +1043,72 @@ void handleKeypress(unsigned char key, int x, int y) {
     break;
 
     case 'r': //giro del helicoptero
-
       Rot +=2;
       if(Rot>360){
         Rot = 0;
       }
-        
+    break;
+
+    case '}':
+      rotaX = 0.0;
+      rotaY = 0.0;
+      rotaZ = 0.0;
+    break;
+
+    case '{':
+      if(flag==0)
+        flag = 1;
+      else
+        flag = 0;
     break;
 
     case 'R': // giro del helicoptero en centido contrario
-
     Rot -=2;
       if(Rot<0){
         Rot = 360;
       }
-
     break;
 
-    case 'l': //Luz
+    case ',':
+      if(rotax==0)
+        rotax=1;
+      else
+        rotax=0;
+    break;
+
+    case '.':
+      if(rotay==0)
+        rotay=1;
+      else
+        rotay=0;
+    break;
+
+    case '-':
+      if(rotaz==0)
+        rotaz=1;
+      else
+        rotaz=0;
+    break;
+
+    case 'l':
+      if(laser == 0)
+        laser = 1;
+      else
+        laser = 0;
+    break;
+
+    case 'h': //Luz
          Luz -= 0.005;
          if (Luz < 0)
              Luz = 1;
+        printf("Luz de helicoptero: %.2f \n", Luz);
+    break;
+
+    case 'p': //Luz
+         Luz2 -= 0.005;
+         if (Luz2 < 0)
+             Luz2 = 1;
+        printf("Luz de lampara: %.2f \n", Luz2);
     break;
 
     case 'z':
@@ -961,14 +1127,13 @@ void handleKeypress(unsigned char key, int x, int y) {
     break;
 
     case 'e':
+      if(rY<30)
         ++rY;
     break;
 
     case 'q':
-      
       if (rY > 2.50)
         --rY;
-
     break;
 
     case 'b':
@@ -976,6 +1141,13 @@ void handleKeypress(unsigned char key, int x, int y) {
       direccionBalon = getRandom(5);
       rebote = 12;
       velocidad=VELOCIDAD_INIT;
+    break;
+    
+    case 'd':
+      if (disparo >= 500)
+        disparo = 25;
+      else
+        disparo +=50;
     break;
   }
 }
@@ -1048,6 +1220,8 @@ void init() {
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_LIGHTING);
   glEnable(GL_LIGHT0);
+  glEnable(GL_LIGHT1);
+  glEnable(GL_LIGHT2);
   glEnable(GL_NORMALIZE);
   glEnable(GL_COLOR_MATERIAL);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -1177,8 +1351,34 @@ void spinDisplay(void) {
 
   moveball();
 
-glutPostRedisplay(); //Vuelve a dibujar
+//rotacion de los x y z 
+  if(rotax){
+    rotaX+=0.5;
+    if(rotaX>360){
+      rotaX = 0;
+    }
+  }
+  
+  if(rotay){
+    rotaY++;
+    if(rotaY>360){
+      rotaY = 0;
+    }
+  }
+  
+  if(rotaz){
+    rotaZ++;
+    if(rotaZ>360){
+      rotaZ = 0;
+    }
+
+  }
+    
+glutPostRedisplay(); //Vuelve a dibujar      
 }
+
+
+
 
 void mouse(int button, int state, int x, int y) {
    switch (button) {

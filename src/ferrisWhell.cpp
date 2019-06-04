@@ -210,8 +210,8 @@ void DrawBase(){
     glTranslatef(0, 0, 25);
     glRotatef(45, 1, 0, 0);   //angulo, x,y,z
     glRotatef(-20, 0, -1, 0); //angulo, x,y,z
-    glColor4ub(255, 55, 79, 1);
-    gluCylinder(pata, 0.5, 0.5, 110, Lados, 2); //base,top,height,slices,stacks
+    glColor4ub(100, 100, 100, 1);
+    gluCylinder(pata, 0.5, 0.5, 115, Lados, 2); //base,top,height,slices,stacks
    glPopMatrix();
    //2
    glPushMatrix();
@@ -219,8 +219,8 @@ void DrawBase(){
     glTranslatef(0, 0, 25);
     glRotatef(45, 1, 0, 0);  //angulo, x,y,z
     glRotatef(20, 0, -1, 0); //angulo, x,y,z
-    glColor4ub(255, 55, 79, 1);
-    gluCylinder(pata, 0.5, 0.5, 110, Lados, 2); //base,top,height,slices,stacks
+    glColor4ub(100, 100, 100, 1);
+    gluCylinder(pata, 0.5, 0.5, 115, Lados, 2); //base,top,height,slices,stacks
   glPopMatrix();
 
    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
