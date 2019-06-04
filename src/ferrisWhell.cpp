@@ -19,8 +19,50 @@ GLint Rot = 0;
 GLfloat Rotacion = 0;
 GLfloat Pausa = 0;
 
+void DrawLamp (void) {
+   GLUquadricObj *qobj; //Define el objeto
+   qobj = gluNewQuadric();
 
-void dibujarBanca(){
+   gluQuadricDrawStyle(qobj, GLU_FILL);
+
+   glPushMatrix();
+     glColor4ub(112, 112, 112, 0); //Rojo
+
+     glPushMatrix();
+       glTranslatef(0, 1.3, 0);
+       glRotatef(90, 1, 0, 0);
+       gluCylinder(qobj, 0.2, 1, 1.5, 8, 1);
+     glPopMatrix();
+
+     gluQuadricDrawStyle(qobj, GLU_LINE);
+     glPushMatrix();
+       glTranslatef(0, -0.2, 0);
+       glRotatef(90, 1, 0, 0);
+       gluCylinder(qobj, 1, 0.2, 0.5, 8, 1);
+     glPopMatrix();
+
+     gluQuadricDrawStyle(qobj, GLU_FILL);
+
+     glPushMatrix();
+       glTranslatef(0, -0.5, 0);
+       glRotatef(90, 1, 0, 0);
+       gluCylinder(qobj, 0.2, 0.2, 5.5, 30, 1);
+     glPopMatrix();
+
+     glPushMatrix();
+       glTranslatef(0, -5.5, 0);
+       glRotatef(90, 1, 0, 0);
+       gluCylinder(qobj, 0.2, 0.8, 1.5, 8, 1);
+     glPopMatrix();
+
+   glPopMatrix();
+
+   gluDeleteQuadric(qobj);
+//glutWireCube (4);
+}
+
+
+void dibujarBanca(int n){
 GLUquadricObj *Cubo;
 Cubo = gluNewQuadric();
 glPushMatrix();
@@ -101,6 +143,13 @@ glPopMatrix();
 glPopMatrix();
 glPopMatrix();
 gluDeleteQuadric(Cubo);
+
+glPushMatrix();
+  glScalef(5,5,5);
+  glTranslatef(0,-8,-20);
+  DrawLamp();
+glPopMatrix();
+
 }
 
 void drawArmazon(){
@@ -177,21 +226,56 @@ void DrawCabina(){
 
 void DrawBase(){
 
+
+  glPushMatrix();
+    glColor4ub(255, 255, 0, 0);
+      glTranslatef(0,-90,60);
+      glScalef(5,1,60);
+      glutSolidCube (1); //tamaño del cubo
+  glPopMatrix();
+
+  glPushMatrix();
+    glColor4ub(255, 255, 0, 0);
+      glTranslatef(0,-89,30);
+      glScalef(5,1,5);
+      glutSolidCube (1); //tamaño del cubo
+  glPopMatrix();
+
+  glPushMatrix();
+    glColor4ub(255, 255, 0, 0);
+      glTranslatef(0,-88,25);
+      glScalef(5,1,5);
+      glutSolidCube (1); //tamaño del cubo
+  glPopMatrix();
+
+  glPushMatrix();
+    glColor4ub(255, 255, 0, 0);
+      glTranslatef(0,-87,20);
+      glScalef(5,1,5);
+      glutSolidCube (1); //tamaño del cubo
+  glPopMatrix();
+
+  glPushMatrix();
+    glColor4ub(255, 255, 0, 0);
+      glTranslatef(0,-86,15);
+      glScalef(5,1,5);
+      glutSolidCube (1); //tamaño del cubo
+  glPopMatrix();
+
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    //Patas
    GLUquadricObj *pata;
    pata = gluNewQuadric();
    gluQuadricNormals(pata, GLU_SMOOTH);
    GLint Lados = 20; //de los tubos
-   GLint largo = 102;
+   GLint largo = 105;
    //1
-
    glPushMatrix();
     glTranslatef(0, 0, 25);
     glRotatef(75, 1, 0, 0);  //angulo, x,y,z
     glRotatef(20, 0, -1, 0); //angulo, x,y,z
     glColor4ub(0, 0,200, 0);   //Rojo
-    gluCylinder(pata, 2, 2, largo, Lados, 2); //base,top,height,slices,stacks
+    gluCylinder(pata, 2, 10, largo, Lados, 2); //base,top,height,slices,stacks
    glPopMatrix();
    //2
    glPushMatrix();
@@ -199,49 +283,20 @@ void DrawBase(){
     glRotatef(75, 1, 0, 0);   //angulo, x,y,z
     glRotatef(-20, 0, -1, 0); //angulo, x,y,z
     glColor4ub(0, 0,200, 0);   //Rojo
-    gluCylinder(pata, 2, 2, largo, Lados, 2); //base,top,height,slices,stacks
+    gluCylinder(pata, 2, 10, largo, Lados, 2); //base,top,height,slices,stacks
    glPopMatrix();
 
-   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   // ALAMBRES
-   //1
-   glPushMatrix();
-    glColor4ub(170, 170, 170, 1);
-    glTranslatef(0, 0, 25);
-    glRotatef(45, 1, 0, 0);   //angulo, x,y,z
-    glRotatef(-20, 0, -1, 0); //angulo, x,y,z
-    glColor4ub(100, 100, 100, 1);
-    gluCylinder(pata, 0.5, 0.5, 115, Lados, 2); //base,top,height,slices,stacks
-   glPopMatrix();
-   //2
-   glPushMatrix();
-    glColor4ub(170, 170, 170, 1);
-    glTranslatef(0, 0, 25);
-    glRotatef(45, 1, 0, 0);  //angulo, x,y,z
-    glRotatef(20, 0, -1, 0); //angulo, x,y,z
-    glColor4ub(100, 100, 100, 1);
-    gluCylinder(pata, 0.5, 0.5, 115, Lados, 2); //base,top,height,slices,stacks
-  glPopMatrix();
+   for(int i = 0, j=-5; i< 10;i++, j-=2){
 
-   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  gluDeleteQuadric(pata);
+      glPushMatrix();
+        glTranslatef(j, -10-(i*5), 26+i+2);
+        glColor4ub(0, 0,200, 0);   //Rojo
+        glRotatef(90, 0, 1,0);
+        gluCylinder(pata, 2, 2, 10+3*i+i, Lados, 2); //base,top,height,slices,stacks
+      glPopMatrix();
+   }
 
-
-   // CUBES
-   //1
-   glPushMatrix();
-    glColor4ub(100, 100, 100, 1);
-    glTranslatef(-40, -85, 100); //x, y(altura), z
-    glScaled(1, 2, 0.6);
-    glutSolidCube(10);
-  glPopMatrix();
-   //2
-   glPushMatrix();
-    glColor4ub(100, 100, 100, 1);
-    glTranslatef(40, -85, 100); //x, y(altura), z
-    glScaled(1, 2, 0.6);
-    glutSolidCube(10);
-   glPopMatrix();
+   
 
 }
 
@@ -403,21 +458,21 @@ void drawFloor()
    glEnd();
 }
 
-void dibujar2bancas(int grados){
+void dibujar2bancas(int grados, int n){
   glPushMatrix();
     glRotatef(grados,0, 1, 0);
     glPushMatrix();
           glTranslatef(0,-65,120);
           glRotatef(90,0,1,0);
           glScalef(0.2,0.2,0.2);
-          dibujarBanca();
+          dibujarBanca( n);
       glPopMatrix();
 
          glPushMatrix();
           glTranslatef(30,-65,120);
           glRotatef(90,0,1,0);
           glScalef(0.2,0.2,0.2);
-          dibujarBanca();
+          dibujarBanca( n);
       glPopMatrix();
     glPopMatrix();
 }
@@ -457,15 +512,16 @@ void display(void)
     glPopMatrix();
    glPopMatrix();
 
-   dibujar2bancas(0);
-   dibujar2bancas(45);
-   dibujar2bancas(90);
-   dibujar2bancas(135);
-   dibujar2bancas(180);
-   dibujar2bancas(225);
-   dibujar2bancas(270);
-   dibujar2bancas(315);
-   dibujar2bancas(360);
+
+   dibujar2bancas(0, 0);
+   dibujar2bancas(45, 1);
+   dibujar2bancas(90, 2);
+   dibujar2bancas(135, 3);
+   dibujar2bancas(180, 4);
+   dibujar2bancas(225, 5);
+   dibujar2bancas(270, 6);
+   dibujar2bancas(315, 7);
+   dibujar2bancas(360, 8);
    
 
 
@@ -550,6 +606,7 @@ void init(void)
    glEnable(GL_DEPTH_TEST);
    glEnable(GL_LIGHTING);
    glEnable(GL_LIGHT0);
+   
    glEnable(GL_NORMALIZE);
    glEnable(GL_COLOR_MATERIAL);
    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

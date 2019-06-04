@@ -13,7 +13,6 @@ GLfloat FLOOR_SIZE = 25.0f; //The length of each side of the floor
 GLfloat Zoom = 1;
 
 GLfloat Luz = 0.1;
-GLfloat Luz2 = 0.1;
 GLfloat Transparencia = 150; // reflejo del piso
 
 GLint spinX = 0, spinY = 0;
@@ -859,7 +858,7 @@ void drawScene() {
    // ================ LUZ
   GLfloat mat_specular2[] = { 2.0, 2.0, 2.0, 1.0 };
   GLfloat diffuseMaterial2[] = { 2.0, 2.0, 2.0, 1.0 };
-  GLfloat lmodel_ambient2[] = { Luz2, Luz2, Luz2, Luz2 };
+  GLfloat lmodel_ambient2[] = { Luz, Luz, Luz, Luz };
 
   GLfloat lightColor2[] = {1.0f, 1.0f, 0.0f, 0.0f}; //Amarillo
 
@@ -1097,18 +1096,11 @@ void handleKeypress(unsigned char key, int x, int y) {
         laser = 0;
     break;
 
-    case 'h': //Luz
+    case 'L': //Luz
          Luz -= 0.005;
          if (Luz < 0)
              Luz = 1;
-        printf("Luz de helicoptero: %.2f \n", Luz);
-    break;
-
-    case 'p': //Luz
-         Luz2 -= 0.005;
-         if (Luz2 < 0)
-             Luz2 = 1;
-        printf("Luz de lampara: %.2f \n", Luz2);
+        printf("Luz: %.2f \n", Luz);
     break;
 
     case 'z':
